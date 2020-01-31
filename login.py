@@ -1,4 +1,5 @@
 import os
+import logging
 
 import selenium
 from selenium import webdriver
@@ -18,10 +19,10 @@ try:
     WebDriverWait(driver, 30).until(
         EC.presence_of_element_located((By.CLASS_NAME, WHATSAPPWEB_EMPTY_CHAT_PANE_CLASS))
     )
-    driver.implicitly_wait(2)
-    cookies = driver.get_cookies()
-    print(len(cookies))  # Why is this printing 0??
-    pickle.dump(cookies, open('whatsapp_cookies.pkl','wb'))
+    local_storage = driver.execute_script('return window.localStorage;')
+    logging.debug(len(local_storage))
+    logging.debug(local_storage)
+    pickle.dump(local_storage, open('whatsapp_lstorage.pkl','wb'))
     # driver.quit()
 except selenium.common.exceptions.TimeoutException:
-    print("You didn't scan the code fast enough!")
+    logging.info("You didn't scan the code fast enough!")

@@ -1,4 +1,4 @@
-whatsapp_cookies.pkl
+*.pkl
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
