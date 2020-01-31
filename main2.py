@@ -9,26 +9,43 @@ from selenium.webdriver.support import expected_conditions as EC
 
 import json
 
-WHATSAPPWEB_EMPTY_CHAT_PANE_CLASS = '_1qNwV'
-WHATSAPPWEB_MESSAGE_INPUT_CLASS = '_3u328'
+def save_local_storage():
+    local_storage_values = driver.execute_script( \
+                "var ls = window.localStorage, items = {}; " \
+                "for (var i = 0, k; i < ls.length; ++i) " \
+                "  items[k = ls.key(i)] = ls.getItem(k); " \
+                "return items; ")
 
-options = webdriver.ChromeOptions()
-options.binary_location = os.getenv('CHROMEPATH')
-chrome_driver_binary = os.getenv('CRHOMEDRIVERPATH')
-driver = webdriver.Chrome(chrome_options=options)
+    dumpedStorage = json.dumps(local_storage_values)
+    f = open("localStorageSavedValues.json","w")
+    f.write(dumpedStorage)
+    f.close()
 
-#driver = webdriver.Chrome()
-driver.get("http://web.whatsapp.com")
+def check_for_local_storage_file():
+    return os.path.exists('localStorageSavedValues.json')
 
-if os.path.exists('localStorageSavedValues.json'):
-
+def inject_local_storage_data_to_browser():
     with open('localStorageSavedValues.json', 'r') as f:
         parsed_local_storage_json = json.load(f)
     
     for key, value in parsed_local_storage_json.items():
         driver.execute_script("window.localStorage.setItem(arguments[0], arguments[1]);", key, value)
 
+WHATSAPPWEB_EMPTY_CHAT_PANE_CLASS = '_1qNwV'
+WHATSAPPWEB_MESSAGE_INPUT_CLASS = '_3u328'
+
+# options = webdriver.ChromeOptions()
+# options.binary_location = os.getenv('CHROMEPATH')
+# chrome_driver_binary = os.getenv('CRHOMEDRIVERPATH')
+# driver = webdriver.Chrome(chrome_options=options)
+
+driver = webdriver.Chrome()
+driver.get("http://web.whatsapp.com")
+
+if check_for_local_storage_file():
+    inject_local_storage_data_to_browser()    
     driver.get("http://web.whatsapp.com")
+    save_local_storage()
 
 # Allow sign in
 
@@ -38,6 +55,8 @@ try:
     )
 except selenium.common.exceptions.TimeoutException:
     print("You didn't scan the code fast enough!")
+
+save_local_storage()
 
 # Locate correct contact
 
@@ -61,16 +80,5 @@ def locate_correct_contact():
     locate_correct_contact()
 
 locate_correct_contact()
-
-local_storage_values = driver.execute_script( \
-            "var ls = window.localStorage, items = {}; " \
-            "for (var i = 0, k; i < ls.length; ++i) " \
-            "  items[k = ls.key(i)] = ls.getItem(k); " \
-            "return items; ")
-
-dumpedStorage = json.dumps(local_storage_values)
-f = open("localStorageSavedValues.json","w")
-f.write(dumpedStorage)
-f.close()
 
 # driver.close()
