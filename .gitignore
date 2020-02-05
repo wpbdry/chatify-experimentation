@@ -1,4 +1,6 @@
 *.pkl
+js/node_modules/*
+js/localStorageData.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
