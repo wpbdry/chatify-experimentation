@@ -8,7 +8,7 @@
     "selenium-webdriver": "^4.0.0-alpha.5"
   },
   "devDependencies": {
-    "electron": "^8.0.0"
+    "electron": "^13.6.6"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
